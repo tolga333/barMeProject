@@ -12,14 +12,25 @@ public class Main {
     }
 
     // Метод за принтиране на данните за заведенията
-    private static void printRestaurantData(String[][] restaurants) {
+    private static void printRestaurantData(String[][] restaurants, int userLocation) {
         System.out.println("Сортирани заведения:");
         for (String[] restaurant : restaurants) {
+            int distance = Math.abs(Integer.parseInt(restaurant[1]) - userLocation);
             System.out.println("Име: " + restaurant[0]);
             System.out.println("Локация: " + restaurant[1] + "м");
+            System.out.println("Разстояние от вас: " + distance + "м");
             System.out.println("Работно време: " + restaurant[2]);
             System.out.println();
         }
+    }
+    // Метод за извеждане на карта
+    private static void displayMap(String[][] restaurants) {
+
+        }
+
+    // Филтриране на отворените заведения
+    private static String[][] filterOpenRestaurants(String[][] restaurants) {
+        return restaurants;
     }
 
     public static void main(String[] args) {
@@ -51,7 +62,10 @@ public class Main {
 
         switch (option) {
             case 1:
-
+                // Сортиране на ресторантите според разстоянието от потребителя
+                sortRestaurantsByDistance(restaurants, userLocation);
+                // Извеждане на сортираните данни за заведенията
+                printRestaurantData(restaurants, userLocation);
                 break;
             case 2:
 
