@@ -23,25 +23,51 @@ public class Main {
     }
     // Метод за извеждане на карта
     private static void displayMap(String[][] restaurants, int userLocation) {
-        System.out.println("Списък с заведения (сортиран по разстояние):");
+//        System.out.println("Списък с заведения (сортиран по разстояние):");
+//
+//        // Добавяме локацията на потребителя в списъка с заведенията
+//        String[] user = {"Потребител", String.valueOf(userLocation), "X"};
+//        String[][] allRestaurants = Arrays.copyOf(restaurants, restaurants.length + 1);
+//        allRestaurants[restaurants.length] = user;
+//
+//        // Сортираме масива със заведения по разстояние във възходящ ред
+//        Arrays.sort(allRestaurants, Comparator.comparingInt(o -> Integer.parseInt(o[1])));
+//
+//        // Извеждаме сортирания списък с заведенията
+//        for (int i = 0; i < allRestaurants.length; i++) {
+//            System.out.println((i + 1) + ". " + allRestaurants[i][0] + " (" + allRestaurants[i][2] + ")");
+//        }
 
-        // Добавяме локацията на потребителя в списъка с заведенията
-        String[] user = {"Потребител", String.valueOf(userLocation), "X"};
-        String[][] allRestaurants = Arrays.copyOf(restaurants, restaurants.length + 1);
-        allRestaurants[restaurants.length] = user;
 
-        // Сортираме масива със заведения по разстояние във възходящ ред
-        Arrays.sort(allRestaurants, Comparator.comparingInt(o -> Integer.parseInt(o[1])));
-
-        // Извеждаме сортирания списък с заведенията
-        for (int i = 0; i < allRestaurants.length; i++) {
-            System.out.println((i + 1) + ". " + allRestaurants[i][0] + " (" + allRestaurants[i][2] + ")");
-        }
         }
 
     // Филтриране на отворените заведения
     private static String[][] filterOpenRestaurants(String[][] restaurants) {
         return restaurants;
+    }
+
+    private static void sortRestaurantsByClosingTime(String[][] restaurants) {
+
+
+        // Създаване на компаратор за сравнение на ресторантите по цифрите след "-" в часа на затваряне
+        Comparator<String[]> closingTimeComparator = Comparator.comparing(restaurant -> {
+            String closingTime = restaurant[2];
+            String digitsAfterDash = closingTime.substring(closingTime.indexOf("-") + 1).trim();
+            if (digitsAfterDash.equals("00:00")) {
+                return 2400; // Заменяме "00:00" с 2400
+            } else {
+                return Integer.parseInt(digitsAfterDash.replace(":", ""));
+            }
+        });
+
+        // Сортиране на ресторантите по цифрите след "-" в часа на затваряне
+        Arrays.sort(restaurants, closingTimeComparator);
+
+        // Отпечатване на сортирания списък с ресторанти
+        for (String[] restaurant : restaurants) {
+            System.out.println("Ресторант: " + restaurant[0]);
+            System.out.println("Работно време: " + restaurant[2]);
+        }
     }
 
     public static void main(String[] args) {
@@ -79,7 +105,7 @@ public class Main {
                 printRestaurantData(restaurants, userLocation);
                 break;
             case 2:
-
+                sortRestaurantsByClosingTime(restaurants);
                 break;
             case 3:
                 displayMap(restaurants,userLocation);
