@@ -55,7 +55,11 @@ public class Main {
             String digitsAfterDash = closingTime.substring(closingTime.indexOf("-") + 1).trim();
             if (digitsAfterDash.equals("00:00")) {
                 return 2400; // Заменяме "00:00" с 2400
-            } else {
+            }else if(digitsAfterDash.equals("00:30")){
+                return 2430; // Заменяме "00:30" с 2430
+            }
+
+            else {
                 return Integer.parseInt(digitsAfterDash.replace(":", ""));
             }
         });
@@ -81,7 +85,7 @@ public class Main {
                 {"Пицария 'Стоп Моцарела'", "800", "10:00 - 22:30"},
                 {"Кафе 'Кафе 65'", "350", "08:30 - 20:30"},
                 {"Ресторант 'Лес'", "550", "09:00 - 23:30"},
-                {"Бар-ресторант 'Нжой'", "700", "17:00 - 02:00"}
+                {"Бар-ресторант 'Нжой'", "700", "17:00 - 00:00"}
         };
 
         // Въвеждане на локацията на потребителя
