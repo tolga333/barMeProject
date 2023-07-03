@@ -1,5 +1,6 @@
 package com.company;
 
+import java.time.LocalTime;
 import java.util.*;
 
 public class Main {
@@ -49,30 +50,71 @@ public class Main {
     private static void sortRestaurantsByClosingTime(String[][] restaurants) {
 
 
-        // Създаване на компаратор за сравнение на ресторантите по цифрите след "-" в часа на затваряне
+//        // Създаване на компаратор за сравнение на ресторантите по цифрите след "-" в часа на затваряне
+//        Comparator<String[]> closingTimeComparator = Comparator.comparing(restaurant -> {
+//            String closingTime = restaurant[2];
+//            String digitsAfterDash = closingTime.substring(closingTime.indexOf("-") + 1).trim();
+//            if (digitsAfterDash.equals("00:00")) {
+//                return 2400; // Заменяме "00:00" с 2400
+//            }else if(digitsAfterDash.equals("00:30")){
+//                return 2430; // Заменяме "00:30" с 2430
+//            }
+//
+//            else {
+//                return Integer.parseInt(digitsAfterDash.replace(":", ""));
+//            }
+//        });
+//
+//        // Сортиране на ресторантите по цифрите след "-" в часа на затваряне
+//        Arrays.sort(restaurants, closingTimeComparator);
+//
+//        // Отпечатване на сортирания списък с ресторанти
+//        for (String[] restaurant : restaurants) {
+//            System.out.println("Ресторант: " + restaurant[0]);
+//            System.out.println("Работно време: " + restaurant[2]);
+//        }
+
+        // Получаване на текущия час от часовника на компютъра
+        LocalTime currentTime = LocalTime.now();
+
+        // Създаване на компаратор за сравнение на ресторантите според разликата от текущия час
         Comparator<String[]> closingTimeComparator = Comparator.comparing(restaurant -> {
             String closingTime = restaurant[2];
-            String digitsAfterDash = closingTime.substring(closingTime.indexOf("-") + 1).trim();
-            if (digitsAfterDash.equals("00:00")) {
-                return 2400; // Заменяме "00:00" с 2400
-            }else if(digitsAfterDash.equals("00:30")){
-                return 2430; // Заменяме "00:30" с 2430
+            String[] timeRange = closingTime.split(" - ");
+            LocalTime startTime = LocalTime.parse(timeRange[0]);
+            LocalTime endTime = LocalTime.parse(timeRange[1]);
+
+            // Обработка случаи, когато затварянето е след полунощ
+            if (endTime.isBefore(startTime)) {
+                endTime = endTime.plusHours(24);
             }
 
-            else {
-                return Integer.parseInt(digitsAfterDash.replace(":", ""));
-            }
+            return Math.abs(endTime.toSecondOfDay() - currentTime.toSecondOfDay());
         });
 
-        // Сортиране на ресторантите по цифрите след "-" в часа на затваряне
+        // Сортиране на заведенията по часа на затваряне
         Arrays.sort(restaurants, closingTimeComparator);
 
-        // Отпечатване на сортирания списък с ресторанти
+        // Извеждане на отворените заведения в момента
         for (String[] restaurant : restaurants) {
-            System.out.println("Ресторант: " + restaurant[0]);
-            System.out.println("Работно време: " + restaurant[2]);
+            String closingTime = restaurant[2];
+            String[] timeRange = closingTime.split(" - ");
+            LocalTime startTime = LocalTime.parse(timeRange[0]);
+            LocalTime endTime = LocalTime.parse(timeRange[1]);
+
+            // Обработка случаи, когато затварянето е след полунощ
+            if (endTime.isBefore(startTime)) {
+                endTime = endTime.plusHours(24);
+            }
+
+            if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
+                System.out.println("Заведение: " + restaurant[0]);
+                System.out.println("Работно време: " + closingTime);
+            }
         }
+
     }
+
 
     public static void main(String[] args) {
         String[][] restaurants = {
