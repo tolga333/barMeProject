@@ -1,5 +1,7 @@
 package com.company;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -25,7 +27,6 @@ public class Main {
     // Метод за извеждане на карта
     private static void displayMap(String[][] restaurants, int userLocation) {
 //        System.out.println("Списък с заведения (сортиран по разстояние):");
-//
 //        // Добавяме локацията на потребителя в списъка с заведенията
 //        String[] user = {"Потребител", String.valueOf(userLocation), "X"};
 //        String[][] allRestaurants = Arrays.copyOf(restaurants, restaurants.length + 1);
@@ -42,41 +43,10 @@ public class Main {
 
         }
 
-    // Филтриране на отворените заведения
-    private static String[][] filterOpenRestaurants(String[][] restaurants) {
-        return restaurants;
-    }
-
     private static void sortRestaurantsByClosingTime(String[][] restaurants) {
-
-
-//        // Създаване на компаратор за сравнение на ресторантите по цифрите след "-" в часа на затваряне
-//        Comparator<String[]> closingTimeComparator = Comparator.comparing(restaurant -> {
-//            String closingTime = restaurant[2];
-//            String digitsAfterDash = closingTime.substring(closingTime.indexOf("-") + 1).trim();
-//            if (digitsAfterDash.equals("00:00")) {
-//                return 2400; // Заменяме "00:00" с 2400
-//            }else if(digitsAfterDash.equals("00:30")){
-//                return 2430; // Заменяме "00:30" с 2430
-//            }
-//
-//            else {
-//                return Integer.parseInt(digitsAfterDash.replace(":", ""));
-//            }
-//        });
-//
-//        // Сортиране на ресторантите по цифрите след "-" в часа на затваряне
-//        Arrays.sort(restaurants, closingTimeComparator);
-//
-//        // Отпечатване на сортирания списък с ресторанти
-//        for (String[] restaurant : restaurants) {
-//            System.out.println("Ресторант: " + restaurant[0]);
-//            System.out.println("Работно време: " + restaurant[2]);
-//        }
-
         // Получаване на текущия час от часовника на компютъра
         LocalTime currentTime = LocalTime.now();
-
+        int restorantindex=0;
         // Създаване на компаратор за сравнение на ресторантите според разликата от текущия час
         Comparator<String[]> closingTimeComparator = Comparator.comparing(restaurant -> {
             String closingTime = restaurant[2];
@@ -108,6 +78,8 @@ public class Main {
             }
 
             if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
+                restorantindex++;
+                System.out.print(restorantindex+" ");
                 System.out.println("Заведение: " + restaurant[0]);
                 System.out.println("Работно време: " + closingTime);
             }
@@ -115,20 +87,44 @@ public class Main {
 
     }
 
+    public static String[][] readDataFromFile(String filename) {
+        try {
+            File file = new File(filename);
+            Scanner scanner = new Scanner(file);
+
+            // Определяне на броя на редовете във входния файл
+            int numRows = 0;
+            while (scanner.hasNextLine()) {
+                scanner.nextLine();
+                numRows++;
+            }
+            scanner.close();
+
+            // Създаване на двумерния масив
+            String[][] restaurants = new String[numRows][3];
+
+            // Отново отваряне на файла за четене на данните
+            scanner = new Scanner(file);
+
+            int rowIndex = 0;
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] restaurantData = line.split(",");
+                restaurants[rowIndex] = restaurantData;
+                rowIndex++;
+            }
+
+            scanner.close();
+            return restaurants;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public static void main(String[] args) {
-        String[][] restaurants = {
-                {"Ресторант 'Българе'", "500", "10:00 - 23:00"},
-                {"Пицария 'Татко Пица'", "750", "11:00 - 00:00"},
-                {"Кафе-бар 'Сохо'", "300", "09:00 - 22:00"},
-                {"Ресторант 'Лятно Кино'", "900", "12:00 - 23:00"},
-                {"Кафе 'Феймус'", "600", "08:00 - 21:00"},
-                {"Ресторант 'Капитан Блъд'", "400", "11:30 - 00:30"},
-                {"Пицария 'Стоп Моцарела'", "800", "10:00 - 22:30"},
-                {"Кафе 'Кафе 65'", "350", "08:30 - 20:30"},
-                {"Ресторант 'Лес'", "550", "09:00 - 23:30"},
-                {"Бар-ресторант 'Нжой'", "700", "17:00 - 00:00"}
-        };
+        String[][] restaurants = readDataFromFile("restaurants.txt");
 
         // Въвеждане на локацията на потребителя
         Scanner scanner = new Scanner(System.in);
