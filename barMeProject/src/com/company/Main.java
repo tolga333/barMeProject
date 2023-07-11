@@ -18,7 +18,6 @@ public class Main {
         for (String[] restaurant : restaurants) {
             int distance = Math.abs(Integer.parseInt(restaurant[1]) - userLocation);
             System.out.println("Име: " + restaurant[0]);
-            System.out.println("Локация: " + restaurant[1] + "м");
             System.out.println("Разстояние от вас: " + distance + "м");
             System.out.println("Работно време: " + restaurant[2]);
             System.out.println();
@@ -26,23 +25,30 @@ public class Main {
     }
     // Метод за извеждане на карта
     private static void displayMap(String[][] restaurants, int userLocation) {
-//        System.out.println("Списък с заведения (сортиран по разстояние):");
-//        // Добавяме локацията на потребителя в списъка с заведенията
-//        String[] user = {"Потребител", String.valueOf(userLocation), "X"};
-//        String[][] allRestaurants = Arrays.copyOf(restaurants, restaurants.length + 1);
-//        allRestaurants[restaurants.length] = user;
-//
-//        // Сортираме масива със заведения по разстояние във възходящ ред
-//        Arrays.sort(allRestaurants, Comparator.comparingInt(o -> Integer.parseInt(o[1])));
-//
-//        // Извеждаме сортирания списък с заведенията
-//        for (int i = 0; i < allRestaurants.length; i++) {
-//            System.out.println((i + 1) + ". " + allRestaurants[i][0] + " (" + allRestaurants[i][2] + ")");
-//        }
+        System.out.println("Списък с заведения (сортиран по разстояние):");
+        // Добавяме локацията на потребителя в списъка с заведенията
+        String[] user = {"Потребител(X)", String.valueOf(userLocation)};
+        String[][] allRestaurants = Arrays.copyOf(restaurants, restaurants.length + 1);
+        allRestaurants[restaurants.length] = user;
+
+        // Сортираме масива със заведения по разстояние във възходящ ред
+        Arrays.sort(allRestaurants, Comparator.comparingInt(o -> Integer.parseInt(o[1])));
+
+        // Извеждаме сортирания списък с заведенията
+        for (int i = 1; i < allRestaurants.length; i++) {
+            if(allRestaurants[i][0].equals("Потребител(X)")){
+                System.out.print( "X__");
+            }
+            System.out.print( i +"__");
+        }
+        System.out.println("");
+        for (int i = 0; i < allRestaurants.length; i++) {
+            System.out.println((i + 1) + ". " + allRestaurants[i][0]);
+        }
 
 
         }
-
+        // Метод за сортиране по време на затваряне
     private static void sortRestaurantsByClosingTime(String[][] restaurants) {
         // Получаване на текущия час от часовника на компютъра
         LocalTime currentTime = LocalTime.now();
@@ -54,7 +60,7 @@ public class Main {
             LocalTime startTime = LocalTime.parse(timeRange[0]);
             LocalTime endTime = LocalTime.parse(timeRange[1]);
 
-            // Обработка случаи, когато затварянето е след полунощ
+           //  Обработка случаи, когато затварянето е след полунощ
             if (endTime.isBefore(startTime)) {
                 endTime = endTime.plusHours(24);
             }
@@ -86,7 +92,7 @@ public class Main {
         }
 
     }
-
+        // Метод за четене от файл
     public static String[][] readDataFromFile(String filename) {
         try {
             File file = new File(filename);
@@ -142,14 +148,16 @@ public class Main {
         switch (option) {
             case 1:
                 // Сортиране на ресторантите според разстоянието от потребителя
-                sortRestaurantsByDistance(restaurants, userLocation);
+               sortRestaurantsByDistance(restaurants, userLocation);
                 // Извеждане на сортираните данни за заведенията
                 printRestaurantData(restaurants, userLocation);
                 break;
             case 2:
+                // Сортира на заведения по време на затваряне и извеждане
                 sortRestaurantsByClosingTime(restaurants);
                 break;
             case 3:
+                // Извеждане на карта на потребителя
                 displayMap(restaurants,userLocation);
                 break;
             default:
